@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Admin — Amara & Zayan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg:        #0e0c09;
+  --bg2:       #161310;
+  --bg3:       #1e1a15;
+  --border:    rgba(184,146,74,0.18);
+  --gold:      #b8924a;
+  --gold-l:    #d4aa6a;
+  --gold-pale: rgba(184,146,74,0.10);
+  --green:     #4a8c5c;
+  --green-pale:rgba(74,140,92,0.12);
+  --red:       #8c4a4a;
+  --red-pale:  rgba(140,74,74,0.12);
+  --amber:     #8c7a4a;
+  --amber-pale:rgba(140,122,74,0.12);
+  --text:      #f0e8d8;
+  --text-mid:  #a89880;
+  --text-dim:  #5c4e3c;
+  --font-serif:'Cormorant Garamond', serif;
+  --font-sans: 'Jost', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+}
+.login-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: center;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+}
+.login-monogram {
+  font-family: var(--font-serif);
+  font-size: 3.5rem; font-weight: 300; font-style: italic;
+  color: var(--gold); line-height: 1; margin-bottom: 6px;
+}
+.login-sub {
+  font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 36px;
+}
+.login-box input {
+  width: 100%; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 13px 16px; color: var(--text);
+  font-family: var(--font-sans); font-size: 0.95rem;
+  outline: none; margin-bottom: 14px;
+  transition: border-color 0.2s;
+}
+.login-box input:focus { border-color: var(--gold); }
+.login-btn {
+  width: 100%; background: var(--gold); color: #fff;
+  border: none; border-radius: 100px; padding: 14px;
+  font-family: var(--font-sans); font-size: 0.72rem;
+  font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s;
+}
+.login-btn:hover { background: var(--gold-l); }
+.login-error {
+  color: #c47a6c; font-size: 0.78rem; margin-top: 10px;
+  display: none;
+}
+
+/* ── LAYOUT ── */
+#app { display: none; }
+#app.visible { display: block; }
+
+header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.header-monogram {
+  font-family: var(--font-serif);
+  font-size: 1.8rem; font-weight: 300; font-style: italic;
+  color: var(--gold); line-height: 1;
+}
+.header-title {
+  font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.header-deadline {
+  font-size: 0.7rem; font-weight: 400;
+  color: var(--text-mid);
+}
+.header-deadline span {
+  color: var(--gold); font-weight: 500;
+}
+.logout-btn {
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 100px; padding: 8px 20px;
+  color: var(--text-dim); font-family: var(--font-sans);
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s;
+}
+.logout-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+main { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 36px;
+}
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px 20px;
+}
+.stat-label {
+  font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 10px;
+}
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 300; font-style: italic;
+  color: var(--gold); line-height: 1;
+}
+.stat-value.green { color: #6ab584; }
+.stat-value.red   { color: #c47a6c; }
+.stat-value.amber { color: var(--gold-l); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.tab {
+  background: none; border: none; cursor: pointer;
+  padding: 12px 20px; font-family: var(--font-sans);
+  font-size: 0.65rem; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-dim);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--text-mid); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.search-input {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 10px 18px;
+  color: var(--text); font-family: var(--font-sans);
+  font-size: 0.85rem; outline: none; width: 260px;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--gold); }
+.toolbar-right { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn {
+  border: none; border-radius: 100px; cursor: pointer;
+  font-family: var(--font-sans); font-size: 0.65rem;
+  font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 10px 22px; transition: all 0.2s;
+}
+.btn-gold { background: var(--gold); color: #fff; }
+.btn-gold:hover { background: var(--gold-l); }
+.btn-outline {
+  background: transparent; color: var(--text-mid);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { background: #5aa36e; }
+
+/* ── ADD GUEST FORM ── */
+.add-guest-form {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  margin-bottom: 20px; display: none;
+}
+.add-guest-form.open { display: block; }
+.add-guest-form h3 {
+  font-family: var(--font-serif); font-size: 1.2rem;
+  font-weight: 300; font-style: italic;
+  color: var(--gold); margin-bottom: 16px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.form-input {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 14px;
+  color: var(--text); font-family: var(--font-sans);
+  font-size: 0.9rem; outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--gold); }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--bg3); }
+th {
+  padding: 13px 18px; text-align: left;
+  font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-dim); border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 14px 18px; font-size: 0.88rem;
+  color: var(--text-mid); border-bottom: 1px solid rgba(184,146,74,0.07);
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(184,146,74,0.04); }
+
+.guest-name { color: var(--text); font-weight: 400; }
+.status-badge {
+  display: inline-block; padding: 4px 12px;
+  border-radius: 100px; font-size: 0.65rem;
+  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.status-confirmed { background: var(--green-pale); color: #6ab584; }
+.status-declined  { background: var(--red-pale);   color: #c47a6c; }
+.status-pending   { background: var(--amber-pale);  color: var(--gold-l); }
+
+.link-cell {
+  font-size: 0.75rem; color: var(--text-dim);
+  max-width: 200px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+.action-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 6px 10px; border-radius: 8px;
+  font-size: 0.75rem; font-weight: 500;
+  transition: all 0.15s; font-family: var(--font-sans);
+}
+.copy-btn { color: var(--gold); }
+.copy-btn:hover { background: var(--gold-pale); }
+.wa-btn { color: #25d366; }
+.wa-btn:hover { background: rgba(37,211,102,0.1); }
+.del-btn { color: var(--text-dim); }
+.del-btn:hover { background: var(--red-pale); color: #c47a6c; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 64px 24px;
+  color: var(--text-dim);
+}
+.empty-state p { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; }
+
+/* ── BULK WHATSAPP ── */
+.wa-export-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; margin-top: 20px;
+  display: none;
+}
+.wa-export-box.open { display: block; }
+.wa-export-box h3 {
+  font-family: var(--font-serif); font-size: 1.1rem;
+  font-weight: 300; font-style: italic; color: var(--gold);
+  margin-bottom: 8px;
+}
+.wa-export-box p {
+  font-size: 0.8rem; color: var(--text-dim); margin-bottom: 16px;
+}
+.wa-message-template {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 0.85rem; color: var(--text-mid);
+  line-height: 1.6; margin-bottom: 16px; white-space: pre-wrap;
+}
+.wa-links-list {
+  display: flex; flex-direction: column; gap: 8px;
+  max-height: 300px; overflow-y: auto;
+}
+.wa-link-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px; gap: 12px;
+}
+.wa-link-name { font-size: 0.88rem; color: var(--text); font-weight: 400; }
+.wa-link-phone { font-size: 0.78rem; color: var(--text-dim); }
+
+/* ── RSVP TABLE ── */
+.dietary-tag {
+  background: var(--gold-pale); color: var(--gold-l);
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 0.65rem; font-weight: 500;
+}
+
+/* ── LOADING ── */
+.loading {
+  text-align: center; padding: 48px;
+  color: var(--text-dim); font-style: italic;
+  font-family: var(--font-serif); font-size: 1.1rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  header { padding: 14px 16px; }
+  main { padding: 20px 12px; }
+  th, td { padding: 10px 12px; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-monogram">A&amp;Z</div>
+    <div class="login-sub">Wedding Admin · Amara &amp; Zayan</div>
+    <input type="password" id="pwd-input" placeholder="Enter password"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <p class="login-error" id="login-error">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<!-- APP -->
+
+<div id="app">
+  <header>
+    <div class="header-left">
+      <div class="header-monogram">A&amp;Z</div>
+      <div>
+        <div class="header-title">Wedding Admin Dashboard</div>
+        <div class="header-deadline">RSVP Deadline: <span id="deadline-display">1 August 2025</span> · <span id="days-left" style="color:var(--gold-l);"></span></div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Log Out</button>
+  </header>
+
+  <main>
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Guests</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value green" id="stat-confirmed">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Declined</div>
+        <div class="stat-value red" id="stat-declined">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value amber" id="stat-pending">—</div>
+      </div>
+    </div>
+
+```
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('guests', this)">Guest List</button>
+  <button class="tab" onclick="switchTab('rsvps', this)">RSVPs Received</button>
+</div>
+
+<!-- GUESTS TAB -->
+<div class="tab-panel active" id="tab-guests">
+  <div class="toolbar">
+    <input class="search-input" type="text" placeholder="Search guests…"
+           oninput="filterGuests(this.value)">
+    <div class="toolbar-right">
+      <button class="btn btn-outline" onclick="toggleWAExport()">📲 WhatsApp Export</button>
+      <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-gold" onclick="toggleAddForm()">+ Add Guest</button>
+    </div>
+  </div>
+
+  <!-- Add guest form -->
+  <div class="add-guest-form" id="add-form">
+    <h3>Add a Guest</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="new-name" type="text" placeholder="e.g. Sarah Jones">
+      </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp Number</label>
+        <input class="form-input" id="new-phone" type="tel" placeholder="e.g. 27821234567">
+      </div>
+      <button class="btn btn-green" onclick="addGuest()">Add</button>
+    </div>
+  </div>
+
+  <!-- WhatsApp export -->
+  <div class="wa-export-box" id="wa-export">
+    <h3>📲 WhatsApp Broadcast Links</h3>
+    <p>Click each link to open WhatsApp with a pre-written personalised message. Send to all pending guests before the deadline.</p>
+    <div class="wa-links-list" id="wa-links-list"></div>
+  </div>
+
+  <!-- Guests table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Invite Link</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="guests-tbody">
+        <tr><td colspan="6"><div class="loading">Loading guests…</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RSVPs TAB -->
+<div class="tab-panel" id="tab-rsvps">
+  <div class="toolbar">
+    <input class="search-input" type="text" placeholder="Search RSVPs…"
+           oninput="filterRSVPs(this.value)">
+    <div class="toolbar-right">
+      <button class="btn btn-outline" onclick="loadRSVPs()">↻ Refresh</button>
+      <button class="btn btn-outline" onclick="exportRSVPsCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Attending</th>
+          <th>Guests</th>
+          <th>Dietary</th>
+        </tr>
+      </thead>
+      <tbody id="rsvps-tbody">
+        <tr><td colspan="6"><div class="loading">Loading RSVPs…</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </main>
+</div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgAOq62atVZUtNk2v7SBi1oWumQW6S3Euxecx5_kJ5eHjKaZZroJH7FkclEJ-nN4I/exec';
+  const INVITE_BASE = 'https://demo-wedding-invite.netlify.app';
+  const PASSWORD = 'wedding2025';
+  const DEADLINE = new Date('2025-08-01');
+
+  let allGuests = [];
+  let allRSVPs  = [];
+
+  /* ── AUTH ── */
+  function doLogin() {
+    const val = document.getElementById('pwd-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      init();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('pwd-input').value = '';
+  }
+
+  /* ── INIT ── */
+  function init() {
+    updateDeadline();
+    loadGuests();
+    loadRSVPs();
+  }
+
+  function updateDeadline() {
+    const now = new Date();
+    const diff = Math.ceil((DEADLINE - now) / (1000 * 60 * 60 * 24));
+    const el = document.getElementById('days-left');
+    if (diff > 0) el.textContent = diff + ' days left';
+    else if (diff === 0) el.textContent = 'Due today!';
+    else el.textContent = 'Deadline passed';
+  }
+
+  /* ── GUESTS ── */
+  async function loadGuests() {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=getGuests`);
+      const data = await res.json();
+      allGuests = data.guests || [];
+      renderGuests(allGuests);
+      updateStats();
+      renderWALinks();
+    } catch(e) {
+      document.getElementById('guests-tbody').innerHTML =
+        `<tr><td colspan="6"><div class="loading">Could not load guests. Check your script URL.</div></td></tr>`;
+    }
+  }
+
+  function renderGuests(guests) {
+    const tbody = document.getElementById('guests-tbody');
+    if (!guests.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No guests added yet. Click "+ Add Guest" to get started.</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = guests.map((g, i) => {
+      const link = g.link || `${INVITE_BASE}?guest=${encodeURIComponent(g.name)}`;
+      const statusClass = g.status && g.status.includes('Confirmed') ? 'status-confirmed'
+                        : g.status && g.status.includes('Declined')  ? 'status-declined'
+                        : 'status-pending';
+      return `<tr>
+        <td style="color:var(--text-dim); font-size:0.8rem;">${i+1}</td>
+        <td class="guest-name">${g.name}</td>
+        <td style="font-size:0.82rem; color:var(--text-dim);">${g.phone || '—'}</td>
+        <td><span class="status-badge ${statusClass}">${g.status || 'Pending ⏳'}</span></td>
+        <td class="link-cell" title="${link}">${link}</td>
+        <td>
+          <button class="action-btn copy-btn" onclick="copyLink('${link}', this)" title="Copy link">Copy</button>
+          <button class="action-btn wa-btn" onclick="openWA('${g.phone}','${g.name}','${link}')" title="Send via WhatsApp">WA</button>
+          <button class="action-btn del-btn" onclick="deleteGuest('${g.name}', this)" title="Remove guest">✕</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function updateStats() {
+    const total     = allGuests.length;
+    const confirmed = allGuests.filter(g => g.status && g.status.includes('Confirmed')).length;
+    const declined  = allGuests.filter(g => g.status && g.status.includes('Declined')).length;
+    const pending   = total - confirmed - declined;
+    document.getElementById('stat-total').textContent     = total;
+    document.getElementById('stat-confirmed').textContent = confirmed;
+    document.getElementById('stat-declined').textContent  = declined;
+    document.getElementById('stat-pending').textContent   = pending;
+  }
+
+  function filterGuests(q) {
+    const filtered = allGuests.filter(g =>
+      g.name.toLowerCase().includes(q.toLowerCase()) ||
+      (g.phone && g.phone.includes(q))
+    );
+    renderGuests(filtered);
+  }
+
+  async function addGuest() {
+    const name  = document.getElementById('new-name').value.trim();
+    const phone = document.getElementById('new-phone').value.trim();
+    if (!name) { alert('Please enter a name.'); return; }
+
+    const link = `${INVITE_BASE}?guest=${encodeURIComponent(name)}`;
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addGuest', name, phone, link })
+      });
+      document.getElementById('new-name').value  = '';
+      document.getElementById('new-phone').value = '';
+      // Optimistically add to local list
+      allGuests.push({ name, phone, status: 'Pending ⏳', link });
+      renderGuests(allGuests);
+      updateStats();
+      renderWALinks();
+    } catch(e) {
+      alert('Error adding guest. Please try again.');
+    }
+  }
+
+  async function deleteGuest(name, btn) {
+    if (!confirm(`Remove ${name} from the guest list?`)) return;
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteGuest', name })
+      });
+      allGuests = allGuests.filter(g => g.name !== name);
+      renderGuests(allGuests);
+      updateStats();
+      renderWALinks();
+    } catch(e) {
+      alert('Error removing guest.');
+    }
+  }
+
+  /* ── WHATSAPP ── */
+  function openWA(phone, name, link) {
+    const msg = encodeURIComponent(
+      `Hi ${name}! 🌹\n\nYou're warmly invited to the wedding of Amara & Zayan.\n\nOpen your personal invitation here:\n${link}\n\nKindly RSVP by 1 August 2025.`
+    );
+    const num = phone ? phone.replace(/\D/g,'') : '';
+    const url = num ? `https://wa.me/${num}?text=${msg}` : `https://wa.me/?text=${msg}`;
+    window.open(url, '_blank');
+  }
+
+  function renderWALinks() {
+    const list = document.getElementById('wa-links-list');
+    const pending = allGuests.filter(g => !g.status || g.status.includes('Pending'));
+    if (!pending.length) {
+      list.innerHTML = `<div class="empty-state"><p>All guests have responded!</p></div>`;
+      return;
+    }
+    list.innerHTML = pending.map(g => {
+      const link = g.link || `${INVITE_BASE}?guest=${encodeURIComponent(g.name)}`;
+      return `<div class="wa-link-item">
+        <div>
+          <div class="wa-link-name">${g.name}</div>
+          <div class="wa-link-phone">${g.phone || 'No number saved'}</div>
+        </div>
+        <button class="action-btn wa-btn" style="font-size:0.8rem; padding:8px 14px;"
+          onclick="openWA('${g.phone}','${g.name}','${link}')">
+          📲 Send Invite
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── RSVPS ── */
+  async function loadRSVPs() {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=getRSVPs`);
+      const data = await res.json();
+      allRSVPs = data.rsvps || [];
+      renderRSVPs(allRSVPs);
+    } catch(e) {
+      document.getElementById('rsvps-tbody').innerHTML =
+        `<tr><td colspan="6"><div class="loading">Could not load RSVPs.</div></td></tr>`;
+    }
+  }
+
+  function renderRSVPs(rsvps) {
+    const tbody = document.getElementById('rsvps-tbody');
+    if (!rsvps.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No RSVPs received yet.</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rsvps.map(r => {
+      const attending = r.attending || '';
+      const isYes = attending.toLowerCase().includes('attending') && !attending.toLowerCase().includes('cannot');
+      const statusClass = isYes ? 'status-confirmed' : 'status-declined';
+      const statusLabel = isYes ? 'Attending ✅' : 'Not Attending ❌';
+      return `<tr>
+        <td style="font-size:0.78rem; color:var(--text-dim);">${r.timestamp || '—'}</td>
+        <td class="guest-name">${r.name || '—'}</td>
+        <td style="font-size:0.82rem; color:var(--text-dim);">${r.email || '—'}</td>
+        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+        <td style="font-size:0.82rem; color:var(--text-mid);">${r.guests || '1'}</td>
+        <td>${r.dietary ? `<span class="dietary-tag">${r.dietary}</span>` : '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function filterRSVPs(q) {
+    const filtered = allRSVPs.filter(r =>
+      (r.name  && r.name.toLowerCase().includes(q.toLowerCase())) ||
+      (r.email && r.email.toLowerCase().includes(q.toLowerCase()))
+    );
+    renderRSVPs(filtered);
+  }
+
+  /* ── CSV EXPORT ── */
+  function exportCSV() {
+    const rows = [['Name','Phone','Status','Invite Link'], ...allGuests.map(g => [g.name, g.phone, g.status, g.link])];
+    downloadCSV(rows, 'guest-list.csv');
+  }
+  function exportRSVPsCSV() {
+    const rows = [['Timestamp','Name','Email','Attending','Guests','Dietary'], ...allRSVPs.map(r => [r.timestamp, r.name, r.email, r.attending, r.guests, r.dietary])];
+    downloadCSV(rows, 'rsvps.csv');
+  }
+  function downloadCSV(rows, filename) {
+    const csv = rows.map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = filename; a.click();
+  }
+
+  /* ── UI HELPERS ── */
+  function copyLink(link, btn) {
+    navigator.clipboard.writeText(link).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1800);
+    });
+  }
+  function toggleAddForm() {
+    document.getElementById('add-form').classList.toggle('open');
+  }
+  function toggleWAExport() {
+    document.getElementById('wa-export').classList.toggle('open');
+  }
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
