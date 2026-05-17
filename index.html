@@ -496,12 +496,28 @@ tbody tr:hover { background: rgba(184,146,74,0.04); }
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgAOq62atVZUtNk2v7SBi1oWumQW6S3Euxecx5_kJ5eHjKaZZroJH7FkclEJ-nN4I/exec';
-  const INVITE_BASE = 'https://demo-wedding-invite10.netlify.app/';
+  const INVITE_BASE = 'https://demo-wedding-invite.netlify.app';
   const PASSWORD = 'wedding2025';
-  const DEADLINE = new Date('2025-08-01');
+  const DEADLINE = new Date('2026-08-01');
 
   let allGuests = [];
   let allRSVPs  = [];
+
+  /* ── JSONP fetch for Google Apps Script (bypasses CORS on GET) ── */
+  function fetchSheet(action) {
+    return new Promise((resolve, reject) => {
+      const cbName = 'cb_' + Math.random().toString(36).slice(2);
+      const script = document.createElement('script');
+      window[cbName] = (data) => {
+        delete window[cbName];
+        document.body.removeChild(script);
+        resolve(data);
+      };
+      script.onerror = () => { delete window[cbName]; reject(new Error('Script load failed')); };
+      script.src = `${SCRIPT_URL}?action=${action}&callback=${cbName}`;
+      document.body.appendChild(script);
+    });
+  }
 
   /* ── AUTH ── */
   function doLogin() {
@@ -539,8 +555,7 @@ tbody tr:hover { background: rgba(184,146,74,0.04); }
   /* ── GUESTS ── */
   async function loadGuests() {
     try {
-      const res = await fetch(`${SCRIPT_URL}?action=getGuests`);
-      const data = await res.json();
+      const data = await fetchSheet('getGuests');
       allGuests = data.guests || [];
       renderGuests(allGuests);
       updateStats();
@@ -673,8 +688,7 @@ tbody tr:hover { background: rgba(184,146,74,0.04); }
   /* ── RSVPS ── */
   async function loadRSVPs() {
     try {
-      const res = await fetch(`${SCRIPT_URL}?action=getRSVPs`);
-      const data = await res.json();
+      const data = await fetchSheet('getRSVPs');
       allRSVPs = data.rsvps || [];
       renderRSVPs(allRSVPs);
     } catch(e) {
